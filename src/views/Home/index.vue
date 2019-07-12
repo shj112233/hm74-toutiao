@@ -93,12 +93,12 @@ export default {
     background: #002033;
     .logo {
       width: 100%;
-      height: 100%;
+      height: 60px;
       background: #024 url(../../assets/images/logo_admin.png) no-repeat center /
         140px auto;
     }
     .close {
-      background-image: url (../../assets/images/logo_admin_01.png);
+      background-image: url(../../assets/images/logo_admin_01.png);
       background-size: 36px auto;
     }
   }
