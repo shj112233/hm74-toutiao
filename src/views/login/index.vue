@@ -78,6 +78,7 @@ export default {
               // consol.log(res.data)  去做什么事情？？？
               // 1 跳转到首页
               // TODO 2 保存用户的信息  用来判断登录的状态
+              window.sessionStorage.setItem('hm74-toutiao', JSON.stringify(res.data.data))
               this.$router.push('/')
             })
             .catch(() => {
