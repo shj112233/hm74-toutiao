@@ -4,7 +4,7 @@
     <el-form class="login-box">
       <img src="../../assets/images/logo_index.png"
            alt="">
-      <!--验证表单  ！-->
+      <!--验证表单  -->
       <el-form ref="loginForm"
                :status-icon="true"
                :model="loginForm"
@@ -14,6 +14,7 @@
                     placeholder="请输入手机号"></el-input>
         </el-form-item>
         <el-form-item prop="code">
+          <!-- prop 指定校验规则的字段 -->
           <el-input v-model="loginForm.code"
                     placeholder="请输入验证码"
                     style="width:240px"></el-input>
