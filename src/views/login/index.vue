@@ -72,7 +72,7 @@ export default {
         if (valid) {
           // 提交登录请求 接口使用文档  axios 是基于promise封装的post（） 返回一个promise对象
           this.$http
-            .post('http://ttapi.research.itcast.cn/mp/v1_0/authorizations', this.loginForm)
+            .post('authorizations', this.loginForm)
             .then(res => {
               // res是  响应对象  包含 后台返回的数据 res.data
               // consol.log(res.data)  去做什么事情？？？
