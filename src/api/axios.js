@@ -1,6 +1,6 @@
 //  配置axios
 import axios from 'axios'
-
+//  axios.create 创建实例   当实例改变  配置对象不用改变
 const instance = axios.create({
   // 配置对象    基准路由   头部信息
   baseURL: 'http://ttapi.research.itcast.cn/mp/v1_0/',
@@ -26,6 +26,17 @@ instance.interceptors.request.use(
   },
   error => {
     return Promise.reject(error)
+  }
+)
+
+//  响应拦截
+instance.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response.status === 401) {
+      location.hash = '#/login'
+      return Promise.reject(error)
+    }
   }
 )
 export default instance
