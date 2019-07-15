@@ -8,6 +8,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 import router from './router'
 // import router from '@/router'
 import axios from './api/axios.js'
+import components from '@/comments'
+Vue.use(components)
 // //  基准路径
 // axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0/'
 // // token 认证

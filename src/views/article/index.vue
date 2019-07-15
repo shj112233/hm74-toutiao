@@ -3,10 +3,11 @@
     <!-- 筛选区域 -->
     <el-card>
       <div slot="header">
-        <el-breadcrumb separator-class="el-icon-arrow-right">
+        <!-- <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
           <el-breadcrumb-item>内容管理</el-breadcrumb-item>
-        </el-breadcrumb>
+        </el-breadcrumb> -->
+        <my-bread>内容管理</my-bread>
       </div>
       <!-- 筛选表单 -->
       <el-form :model="reqParams"
@@ -47,7 +48,9 @@
       </el-form>
     </el-card>
     <!-- 结果区域 -->
-    <el-card></el-card>
+    <el-card>
+      <my-test></my-test>
+    </el-card>
   </div>
 
   <!-- 结果区域 -->
@@ -55,8 +58,11 @@
 </template>
 
 <script>
-
+import MyBread from '../../../src/compnents/my-bread.vue'
+// import MyTest from '../../../src/compnents/my-test.vue'
 export default {
+  //  注册组件
+  components: { MyBread },
   data () {
     return {
       // 提交后台的筛选条件数据
