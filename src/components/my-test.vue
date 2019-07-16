@@ -2,8 +2,8 @@
   <div class="container">
     <p>头部</p>
     <p>
-      <slot class="constent"
-            :test="innerData">内容</slot>
+      <slot name="header"
+            :text="'abc'"></slot>
     </p>
     <p>底部</p>
   </div>

@@ -1,3 +1,4 @@
+/* eslint-disable vue/no-unused-vars */
 <template>
   <div class="article-container">
     <!-- 筛选区域 -->
@@ -14,7 +15,7 @@
                size="small"
                label-width="80px">
         <el-form-item label="状态：">
-          <el-radio-group v-model="reqPatams.status">
+          <el-radio-group v-model="reqParams.status">
             <el-radio :label="null">全部</el-radio>
             <el-radio :label="0">草稿</el-radio>
             <el-radio :label="1">待审核</el-radio>
@@ -23,18 +24,20 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道：">
-          <el-select v-model="reqPatams.channel_id"
+          <el-select v-model="reqParams.channel_id"
                      placeholder="所有频道">
             <el-option v-for="item in channelOptions"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
+                       :key="item.id"
+                       :label="item.name"
+                       :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间：">
           <div class="block">
-            <el-date-picker v-model="datavalues"
+            <el-date-picker value-format="yyyy-MM-dd"
+                            @change="changeDate"
+                            v-model="datavalues"
                             type="daterange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -43,13 +46,77 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">筛选</el-button>
+          <el-button type="primary"
+                     @click="search()">筛选</el-button>
         </el-form-item>
       </el-form>
     </el-card>
     <!-- 结果区域 -->
     <el-card>
-      <my-test></my-test>
+      <div slot="header">
+        根据筛选条件共查到<b>{{total}}</b>条结果
+      </div>
+      <el-table :data="articles">
+        <el-table-column label="封面">
+          <template slot-scope="scope">
+            <el-image :src="scope.row.cover.images[0]"
+                      style="width:100px; height:75px">
+              <div slot="error">
+                <img src="../../assets/images/error.gif"
+                     width=100px;
+                     height:75px
+                     alt="">
+              </div>
+            </el-image>
+
+          </template>
+        </el-table-column>
+        <el-table-column label="标题"
+                         prop="title">
+        </el-table-column>
+        <el-table-column label="状态">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.status ===0"
+                    type="info">草稿</el-tag>
+            <el-tag v-if="scope.row.status ===1">待审核</el-tag>
+            <el-tag v-if="scope.row.status ===2"
+                    type="success">审核通过</el-tag>
+            <el-tag v-if="scope.row.status ===3"
+                    type="warning">审核失败</el-tag>
+            <el-tag v-if="scope.row.status ===4"
+                    type="danger">已删除</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="发布时间"
+                         prop="pubdate">
+        </el-table-column>
+        <el-table-column label="操作"
+                         width="120px">
+
+          <template slot-scope="scope">
+            <el-button @click="edit(scope.row.id)"
+                       icon="el-icon-edit"
+                       plain
+                       type="primary"
+                       circle></el-button>
+            <el-button @click="del(scope.row.id)"
+                       icon="el-icon-delete"
+                       plain
+                       type="danger"
+                       circle></el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="box">
+        <el-pagination background
+                       layout="prev, pager, next"
+                       @current-change="pager "
+                       :current-page="reqParams.page"
+                       :page-size='reqParams.per_page'
+                       :total="total">
+
+        </el-pagination>
+      </div>
     </el-card>
   </div>
 
@@ -58,15 +125,18 @@
 </template>
 
 <script>
-import MyBread from '../../../src/compnents/my-bread.vue'
+// import MyBread from '../../../src/components/my-bread.vue'
 // import MyTest from '../../../src/compnents/my-test.vue'
 export default {
   //  注册组件
-  components: { MyBread },
+  // components: { MyBread },
   data () {
     return {
       // 提交后台的筛选条件数据
-      reqPatams: {
+      reqParams: {
+        // 默认第一页
+        page: 1,
+        per_page: 20,
         //  后端接口文档中的数据时status  是属于reqParams的
         // 默认数据 ""  与 null区别
         //  如果是 null 该字段 是不会提交给后台的  这个是后端要求不传 ，空字符串 也是要传的
@@ -76,18 +146,51 @@ export default {
         end_pubdate: null
       },
       // 频道的选项数据
-      channelOptions: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }],
+      channelOptions: [],
       //  日期数据  为了绑定begin和end两项数据
-      datavalues: []
+      datavalues: [],
+      // 文章列表数据
+      articles: [],
+      // 总条数
+      total: 0
+    }
+  },
+  created () {
+    // 调用方法
+    this.getChannelOptions()
+    this.getArticles()
+  },
+  methods: {
+    //  分页
+    pager (newPage) {
+      //  提交当前页码给后台   才能获取对应 的数据
+      this.reqParams.page = newPage
+      this.getArticles()
+    },
+    // 选择时间处理函数
+    changeDate (values) {
+      this.reqParams.begin_pubdate = values[0]
+      this.reqParams.end_pubdate = values[1]
+    },
+    //  筛选搜索
+    search () {
+      this.getArticles()
+    },
+    //  获取频道数据的方法
+    async getChannelOptions () {
+      // res==>{data:响应内容} ==》{data:{data:{channels:[{id,name}]}}}
+      //  解构赋值  const {data:{data}} = res
+      const { data: { data } } = await this.$http.get('channels') //  这个channels是路径
+      this.channelOptions = data.channels //  这个channels是从后端获取的数据
+    },
+    // 获取文件列表数据
+    async getArticles () {
+      // post 传参 post('url',{参数对象})
+      //  get 传参  get('url?key=value1&....')
+      const { data: { data } } = await this.$http.get('articles', { params: this.reqParams })
+      this.articles = data.results
+      // 获取总条数
+      this.total = data.total_count
     }
   }
 
@@ -98,5 +201,9 @@ export default {
 //  element-UI 提供的组件 解析完毕后在当前标签上会加上一个和组件的名称一致的class
 .el-card {
   margin-bottom: 20px;
+}
+.box {
+  text-align: center;
+  margin-top: 20px;
 }
 </style>

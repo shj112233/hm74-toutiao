@@ -10,7 +10,7 @@
 </template>
 <script>
 export default {
-  name: 'my - bread'
+  name: 'my-bread'
 }
 </script>
 <style scoped lang="less">

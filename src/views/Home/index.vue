@@ -49,8 +49,7 @@
         <span class="el-icon-s-fold"
               @click="toggleMenu()"></span>
         <span class="text">江苏传智播客科技教育有限公司</span>
-        <el-dropdown style="float:right"
-                     @command="handleCommand">
+        <el-dropdown style="float:right">
           <span class="el-dropdown-link">
             <img style="vertical-align:middle"
                  width="30"
