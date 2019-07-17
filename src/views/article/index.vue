@@ -1,6 +1,7 @@
-/* eslint-disable vue/no-unused-vars */
+
 <template>
   <div class="article-container">
+    <my-channel @input="fn"></my-channel>
     <!-- 筛选区域 -->
     <el-card>
       <div slot="header">
@@ -161,6 +162,29 @@ export default {
     this.getArticles()
   },
   methods: {
+    fn (data) {
+      console.log('fn')
+      console.log(data)
+    },
+    //  编辑
+    edit (id) {
+      this.$router.push(`/publish?id=${id}`)
+    },
+    del (id) {
+      this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        await this.$http.delete(`articles/${id}`)//  如果执行失败  下面的两行代码不会执行
+        // 删除成功
+        this.$message.success('删除成功')
+        //  更新列表
+        this.getArticles()
+      }).catch(() => {
+
+      })
+    },
     //  分页
     pager (newPage) {
       //  提交当前页码给后台   才能获取对应 的数据

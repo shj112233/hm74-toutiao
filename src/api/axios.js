@@ -1,5 +1,6 @@
 //  配置axios
 import axios from 'axios'
+import JSONBig from 'json-bigint'
 //  axios.create 创建实例   当实例改变  配置对象不用改变
 const instance = axios.create({
   // 配置对象    基准路由   头部信息
@@ -8,7 +9,17 @@ const instance = axios.create({
     // Authorization:
     //   'Bearer ' +
     //   JSON.parse(window.sessionStorage.getItem('hm74-toutiao')).token
-  }
+  },
+  transformResponse: [
+    data => {
+      //  对data 进行任意转换处理
+      if (data) {
+        //  对 当后端无响应数据时 做一个精确的判断
+        return JSONBig.parse(data)
+      }
+      return data
+    }
+  ]
 })
 
 // 请求拦截
@@ -33,10 +44,12 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   response => response,
   error => {
-    if (error.response.status === 401) {
+    //  当后端无数据响应时  做精确判断
+    if (error.response && error.response.status === 401) {
+      //  hash  哈希  是url后  #开始的字符串
       location.hash = '#/login'
-      return Promise.reject(error)
     }
+    return Promise.reject(error)
   }
 )
 export default instance
