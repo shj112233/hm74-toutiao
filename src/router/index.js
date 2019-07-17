@@ -7,6 +7,7 @@ import Welcome from '../views/Welcome/index.vue'
 import NotFound from '../views/NotFound/index.vue'
 import Article from '../views/article'
 import Setting from '../views/Setting'
+import Image from '../views/image'
 Vue.use(VueRouter)
 const router = new VueRouter({
   routes: [
@@ -18,7 +19,8 @@ const router = new VueRouter({
       children: [
         { name: 'welcome', path: '/', component: Welcome },
         { name: 'article', path: '/article', component: Article },
-        { name: 'setting', path: '/setting', component: Setting }
+        { name: 'setting', path: '/setting', component: Setting },
+        { name: 'image', path: '/image', component: Image }
       ]
     },
     //  前边很多规则都不好使 就走到这步

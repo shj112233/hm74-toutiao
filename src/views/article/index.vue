@@ -1,7 +1,7 @@
 
 <template>
   <div class="article-container">
-    <my-channel @input="fn"></my-channel>
+    <!-- <my-channel @input="fn"></my-channel> -->
     <!-- 筛选区域 -->
     <el-card>
       <div slot="header">
@@ -25,14 +25,8 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道：">
-          <el-select v-model="reqParams.channel_id"
-                     placeholder="所有频道">
-            <el-option v-for="item in channelOptions"
-                       :key="item.id"
-                       :label="item.name"
-                       :value="item.id">
-            </el-option>
-          </el-select>
+          <!-- 为实现channel_id 改变时的数据跟新 -->
+          <my-channel v-model="reqParams.channel_id"></my-channel>
         </el-form-item>
         <el-form-item label="时间：">
           <div class="block">
@@ -146,8 +140,7 @@ export default {
         begin_pubdate: null,
         end_pubdate: null
       },
-      // 频道的选项数据
-      channelOptions: [],
+
       //  日期数据  为了绑定begin和end两项数据
       datavalues: [],
       // 文章列表数据
@@ -157,15 +150,13 @@ export default {
     }
   },
   created () {
-    // 调用方法
-    this.getChannelOptions()
     this.getArticles()
   },
   methods: {
-    fn (data) {
-      console.log('fn')
-      console.log(data)
-    },
+    // fn (data) {
+    //   console.log('fn')
+    //   console.log(data)
+    // },
     //  编辑
     edit (id) {
       this.$router.push(`/publish?id=${id}`)
@@ -200,13 +191,7 @@ export default {
     search () {
       this.getArticles()
     },
-    //  获取频道数据的方法
-    async getChannelOptions () {
-      // res==>{data:响应内容} ==》{data:{data:{channels:[{id,name}]}}}
-      //  解构赋值  const {data:{data}} = res
-      const { data: { data } } = await this.$http.get('channels') //  这个channels是路径
-      this.channelOptions = data.channels //  这个channels是从后端获取的数据
-    },
+
     // 获取文件列表数据
     async getArticles () {
       // post 传参 post('url',{参数对象})
