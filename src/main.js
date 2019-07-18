@@ -9,6 +9,7 @@ import router from './router'
 // import router from '@/router'
 import axios from './api/axios.js'
 import components from '@/components'
+import '@/styles/index.less'
 Vue.use(components)
 // //  基准路径
 // axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0/'
